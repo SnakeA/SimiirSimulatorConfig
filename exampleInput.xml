@@ -1,0 +1,119 @@
+<!--
+For all the directories that are specified in the file (except baseDir which should include the full path)
+, assume that they will be appended on the full simiir dir (specified as a cmd line arg)
+-->
+
+<simulationConfiguration id="" baseDir="/home/angelos/Desktop/UsersConfig">>
+
+    <topics>
+        <!--
+        These are the topics that each simulated user will complete
+        -->
+        <topic id="347" filename="/example_data/topics/topic.347" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="435" filename="/example_data/topics/topic.435" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+    </topics>
+
+    <searchInterface>
+        <!--
+        This is the search interface that the simulated users will interact with
+        -->
+        <class name="WhooshSearchInterface">
+            <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+             <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
+            <attribute name ="model" type="integer" value="0" is_argument="true" />
+        </class>
+        <class name="WhooshSearchInterface">
+            <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+             <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
+            <attribute name="model" type="integer" value="1" is_argument="true" />
+        </class>
+        <class name="WhooshSearchInterface">
+            <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+             <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
+            <attribute name="model" type="integer" value="2" is_argument="true" />
+        </class>
+	</searchInterface>
+
+   <queryGenerator>
+       <!--
+        This is the query generator strategy
+        -->
+       <class name="SingleTriInterleavedQueryGenerator">
+           <attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
+       </class>
+   </queryGenerator>
+
+   <textClassifiers>
+       <!--
+        These are the probabilities of clicking a relevant snippet and clicking a non-relevant snippet
+        -->
+      <snippetClassifier>
+          <class name="InformedTrecTextClassifier">
+             <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
+             <attribute is_argument="true" name="rprob" type="float" value="0.36"/>
+             <attribute is_argument="true" name="nprob" type="float" value="0.21"/>
+          </class>
+      </snippetClassifier>
+        <!--
+        These are the probabilities of marking a relevant document and marking a non-relevant document
+        -->
+      <documentClassifier>
+          <class name ="InformedTrecTextClassifier">
+              <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
+              <attribute is_argument="true" name="rprob" type="float" value="0.71"/>
+              <attribute is_argument="true" name="nprob" type="float" value="0.53"/>
+          </class>
+      </documentClassifier>
+   </textClassifiers>
+
+   <stoppingDecisionMaker>
+       <!--
+        This is the stopping decision strategy.
+        -->
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="5"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="15"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="25"/>
+       </class>
+       <class name ="SequentialNonrelDecisionMaker">
+            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="3"/>
+       </class>
+       <class name ="SequentialNonrelDecisionMaker">
+            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="4"/>
+       </class>
+       <class name ="SequentialNonrelDecisionMaker">
+            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="5"/>
+       </class>
+       <class name ="SequentialNonrelDecisionMaker">
+            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="6"/>
+       </class>
+
+
+   </stoppingDecisionMaker>
+
+
+   <logger>
+       <!--
+        These are the costs for running a simulation
+        -->
+       <class name ="FixedCostLogger">
+          <attribute is_argument="true" name="time_limit" type="integer" value="1200"/>
+          <attribute is_argument="true" name="query_cost" type="float" value="15.1"/>
+          <attribute is_argument="true" name="document_cost" type="float" value="21.45"/>
+          <attribute is_argument="true" name="snippet_cost" type="float" value="1.3"/>
+          <attribute is_argument="true" name="serp_results_cost" type="float" value="1.1"/>
+          <attribute is_argument="true" name="mark_document_cost" type="float" value="2.57"/>
+       </class>
+   </logger>
+
+   <searchContext>
+       <class name ="SearchContextRevisedRelevance"></class>
+   </searchContext>
+</simulationConfiguration>
