@@ -9,8 +9,7 @@ For all the directories that are specified in the file (except baseDir which sho
         <!--
         These are the topics that each simulated user will complete
         -->
-        <topic id="347" filename="/example_data/topics/topic.347" qrelsFilename="/example_data/qrels/trec2005.qrels" />
-        <topic id="435" filename="/example_data/topics/topic.435" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+	    <topic id="367" filename="/example_data/topics/topic.367" qrelsFilename="/example_data/qrels/trec2005.qrels" />
     </topics>
 
     <searchInterface>
@@ -41,7 +40,7 @@ For all the directories that are specified in the file (except baseDir which sho
        <!--
         This is the query generator strategy
         -->
-       <class name="SingleTriInterleavedQueryGenerator">
+       <class name="TrecTopicQueryGenerator">
            <attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
        </class>
    </queryGenerator>
@@ -53,8 +52,7 @@ For all the directories that are specified in the file (except baseDir which sho
       <snippetClassifier>
           <class name="InformedTrecTextClassifier">
              <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
-             <attribute is_argument="true" name="rprob" type="float" value="0.36"/>
-             <attribute is_argument="true" name="nprob" type="float" value="0.21"/>
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
           </class>
       </snippetClassifier>
         <!--
@@ -63,8 +61,7 @@ For all the directories that are specified in the file (except baseDir which sho
       <documentClassifier>
           <class name ="InformedTrecTextClassifier">
               <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
-              <attribute is_argument="true" name="rprob" type="float" value="0.71"/>
-              <attribute is_argument="true" name="nprob" type="float" value="0.53"/>
+              <attribute name="data_handler" type="integer" value="0" is_argument="false" />
           </class>
       </documentClassifier>
    </textClassifiers>
@@ -74,28 +71,8 @@ For all the directories that are specified in the file (except baseDir which sho
         This is the stopping decision strategy.
         -->
        <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="5"/>
+            <attribute is_argument="true" name="depth" type="integer" value="20"/>
        </class>
-       <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="15"/>
-       </class>
-       <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="25"/>
-       </class>
-       <class name ="SequentialNonrelDecisionMaker">
-            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="3"/>
-       </class>
-       <class name ="SequentialNonrelDecisionMaker">
-            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="4"/>
-       </class>
-       <class name ="SequentialNonrelDecisionMaker">
-            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="5"/>
-       </class>
-       <class name ="SequentialNonrelDecisionMaker">
-            <attribute is_argument="true" name="nonrelevant_threshold" type="integer" value="6"/>
-       </class>
-
-
    </stoppingDecisionMaker>
 
 
@@ -114,6 +91,8 @@ For all the directories that are specified in the file (except baseDir which sho
    </logger>
 
    <searchContext>
-       <class name ="SearchContextRevisedRelevance"></class>
+       <class name ="SearchContext">
+           <attribute is_argument="false" name="relevance_revision" type="integer" value="1" />
+       </class>
    </searchContext>
 </simulationConfiguration>
