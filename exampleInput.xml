@@ -43,6 +43,9 @@ For all the directories that are specified in the file (except baseDir which sho
        <class name="TrecTopicQueryGenerator">
            <attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
        </class>
+       <class name="TriTermQueryGenerator">
+           <attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
+       </class>
    </queryGenerator>
 
    <textClassifiers>

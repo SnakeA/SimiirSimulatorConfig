@@ -9,34 +9,38 @@ from collections import defaultdict
 
 
 
-def get_available_classes(componentsPath, package):
+def get_available_classes(componentsPath, component):
+    """
+    Given the componentsPath (i.e. where the components (queryGen, StoppingDec etc) are located) and the specific component
+    Import all modules and return the names of the valid classes.
+    This is used for input validation purposes
+    """
+    sys.path.append(componentsPath)
 
-        sys.path.append(componentsPath)
+    finalPath = os.path.join(componentsPath,component)
 
-        finalPath = os.path.join(componentsPath,package)
+    modules = []
+    classes = set()
 
-        modules = []
-        classes = set()
+    # List through the modules in the specified package, ignoring __init__.py, and append them to a list.
+    for f in os.listdir(finalPath):
+        if f.endswith('.py') and not f.startswith('__init__'):
+            modules.append('{0}.{1}'.format(component, os.path.splitext(f)[0]))
 
-        # List through the modules in the specified package, ignoring __init__.py, and append them to a list.
-        for f in os.listdir(finalPath):
-            if f.endswith('.py') and not f.startswith('__init__'):
-                modules.append('{0}.{1}'.format(package, os.path.splitext(f)[0]))
+    module_references = []
 
-        module_references = []
-
-        # Attempt to import each module in turn so we can access its classes
-        for module in modules:
-            module_references.append(importlib.import_module(module))
+    # Attempt to import each module in turn so we can access its classes
+    for module in modules:
+        module_references.append(importlib.import_module(module))
 
 
-        # Now loop through each module, looking at the classes within it - and then add each class to a set of valid classes.
-        for module in module_references:
-            for name, obj in inspect.getmembers(module):
-                if inspect.isclass(obj):
-                    classes.add(name)
+    # Now loop through each module, looking at the classes within it - and then add each class to a set of valid classes.
+    for module in module_references:
+        for name, obj in inspect.getmembers(module):
+            if inspect.isclass(obj):
+                classes.add(name)
 
-        return classes
+    return classes
 
 def read_file_to_string(filename):
     """
@@ -329,7 +333,8 @@ def generate_markup_userFiles(dict_repr, permutations, simiirPath):
 
 def generate_markup_simulationFiles(dict_repr,permutation,users,topics):
     """
-    Given a tuple of dictionary objects,topics and users generates the markup & create files for the associated simulations. Returns the a list with the full paths of the simulation config. files
+    Given a tuple of dictionary objects,topics and users generates the markup & create files for the associated simulations.
+    Returns the a list with the full paths of the simulation config. files
     """
 
     simulation_files = []
