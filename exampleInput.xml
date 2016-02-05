@@ -74,6 +74,12 @@ For all the directories that are specified in the file (except baseDir which sho
         This is the stopping decision strategy.
         -->
        <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="10"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="15"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
             <attribute is_argument="true" name="depth" type="integer" value="20"/>
        </class>
    </stoppingDecisionMaker>
