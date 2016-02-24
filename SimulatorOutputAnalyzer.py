@@ -3,123 +3,172 @@ import os
 import csv
 import sys
 
-#Clears output folder
-def clearOutFolder(folder):
-    for file in os.listdir(folder):
-        file_path = os.path.join(folder, file)
+
+class SimulatorOutputAnalyser():
+    def __init__(self, input_dir, simiir_path, file_out):
+        self.input_dir = input_dir
+        self.file_out = file_out
+        self.simiir_path = simiir_path
+        self.data_out = []
+        self.curr_root = ''
+        self.curr_fileName = ''
+
+    def writeCsvFile(self):
+        """
+        Provided the data from the object, write them to the csv file specified
+        """
+        fileOut = open(self.file_out, 'w')
 
         try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-            #elif os.path.isdir(file_path): shutil.rmtree(file_path)
-        except Exception, e:
-            print e
+            writer = csv.writer(fileOut)
+            writer.writerow(('Run', 'IR Model', 'Topic', 'Query Generator', 'Stopping Strategy',
+                             'Stopping Strategy Value', 'CG_Value', 'Total Queries Issued',
+                             'Total Snippets Examined', 'Total Documents Examined', 'Total Documents Marked Relevant',
+                             'Mean Depth Value',
+                             'Total Time Taken', 'Map', 'P@5', 'P@10', 'P@15', 'P@20', 'P@30')
+                            )
 
-# Writes evaluation measures for each simulation run to CSV file
-def writeCsvFile(data,fileOutPath):
-    fileOut = open(fileOutPath, 'w')
+            for item in self.data_out:
+                lineSplit = item.split(',')
+                writer.writerow((lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4], lineSplit[5],
+                                 lineSplit[6], lineSplit[7],
+                                 lineSplit[8], lineSplit[9], lineSplit[10], lineSplit[11], lineSplit[12], lineSplit[13],
+                                 lineSplit[14],
+                                 lineSplit[15], lineSplit[16], lineSplit[17], lineSplit[18]))
 
-    try:
-        writer = csv.writer(fileOut)
-        writer.writerow(('Run', 'IR Model','Topic','Query Generator','Stopping Strategy',
-                          'Stopping Strategy Value','CG_Value', 'Total Queries Issued',
-                         'Total Snippets Examined', 'Total Documents Examined', 'Total Documents Marked Relevant', 'Mean Depth Value',
-                         'Total Time Taken','Map', 'P@5', 'P@10', 'P@15', 'P@20', 'P@30')
-                         )
+        finally:
+            fileOut.close()
 
-        for item in data:
-            lineSplit = item.split(',')
-            writer.writerow((lineSplit[0],lineSplit[1],lineSplit[2],lineSplit[3],lineSplit[4],lineSplit[5],lineSplit[6], lineSplit[7],
-                             lineSplit[8], lineSplit[9], lineSplit[10], lineSplit[11], lineSplit[12], lineSplit[13], lineSplit[14],
-                             lineSplit[15], lineSplit[16], lineSplit[17], lineSplit[18]))
+    def cgCalculator(self, relevantDocs, topic):
+        """
+        Given the relevant documents and the topic of a simulation run retrun the Cumulative Gain
+        using the qrels file
+        """
 
-    finally:
-        fileOut.close()
+        cg = 0
+        fileName = os.path.join(self.simiir_path, 'example_data/qrels/trec2005.qrels')
+        with open(fileName, 'r') as qrelFile:
 
+            for docId in relevantDocs:
 
-#Find the relevance of the marked-as-relevant documents in the qrels files
-def cgCalculator(simiirDir,relevantDocs, topic):
+                for line in qrelFile:
+                    if (docId in line) and (topic in line):
+                        # print 'CG for '+ docId +' ' + line.split(' ')[3]
+                        cg = cg + int(line.split(' ')[3])
 
-    cg = 0
-    fileName = os.path.join(simiirDir,'example_data/qrels/trec2005.qrels')
-    with open(fileName, 'r') as qrelFile:
+                # return to beginning of file
+                qrelFile.seek(0)
 
-        for docId in relevantDocs:
+        return cg
 
-            for line in qrelFile:
-                if (docId in line) and (topic in line):
-                    #print 'CG for '+ docId +' ' + line.split(' ')[3]
-                    cg = cg + int(line.split(' ')[3])
+    def meanDepthCalculator(self, total_snips_examined, total_queries_issued):
+        """
+        Given the total snippets examined and total queries issued return the mean depth of the simulation run
+        """
+        if total_snips_examined == '' or total_queries_issued == '':
+            mean_depth = '0'
+        else:
+            mean_depth = float(total_snips_examined) / float(total_queries_issued)
+            mean_depth = str(mean_depth)
 
-            #return to beginning of file
-            qrelFile.seek(0)
+        return mean_depth
 
-    return cg
+    def extractLogFileInfo(self, fileIn):
+        """
+        Given the logFile of a Run, extract & return:
+          - Documents that marked as relevant
+          - Total Queries Issued
+          - Total Snippets Examined
+          - Total Documents Examined
+          - Total Documents Marked Relevant
+        """
 
-def extractLogFileInfo(fileIn):
-    """
-    Given the logFile of a Run, extract & return:
-      - Documents that marked as relevant
-      - Total Queries Issued
-      - Total Snippets Examined
-      - Total Documents Examined
-      - Total Documents Marked Relevant
-    """
+        relevantDocs = []
+        total_queries_issued = ''
+        total_snips_examined = ''
+        total_docs_examined = ''
+        total_docs_markedRel = ''
+        total_time_taken = ''
 
-    relevantDocs = []
-    total_queries_issued = ''
-    total_snips_examined = ''
-    total_docs_examined = ''
-    total_docs_markedRel = ''
-    total_time_taken = ''
+        for line in fileIn:
+            if 'CONSIDERED_RELEVANT' in line:
+                relevantDocs.append(line.split(' ')[5].replace('\n', ''))
+            elif 'TOTAL_QUERIES_ISSUED' in line:
+                total_queries_issued = line.split(' ')[-1].replace('\n', '')
+            elif 'TOTAL_SNIPPETS_EXAMINED' in line:
+                total_snips_examined = line.split(' ')[-1].replace('\n', '')
+            elif 'TOTAL_DOCUMENTS_EXAMINED' in line:
+                total_docs_examined = line.split(' ')[-1].replace('\n', '')
+            elif 'TOTAL_DOCUMENTS_MARKED_RELEVANT' in line:
+                total_docs_markedRel = line.split(' ')[-1].replace('\n', '')
+            # This is to extract the total time taken
+            if 'ACTION' in line:
+                total_time_taken = line.split(' ')[3]
 
-    for line in fileIn:
-        if 'CONSIDERED_RELEVANT' in line:
-            relevantDocs.append(line.split(' ')[5].replace('\n',''))
-        elif 'TOTAL_QUERIES_ISSUED' in line:
-            total_queries_issued = line.split(' ')[-1].replace('\n','')
-        elif 'TOTAL_SNIPPETS_EXAMINED' in line:
-            total_snips_examined = line.split(' ')[-1].replace('\n','')
-        elif 'TOTAL_DOCUMENTS_EXAMINED' in line:
-            total_docs_examined = line.split(' ')[-1].replace('\n','')
-        elif 'TOTAL_DOCUMENTS_MARKED_RELEVANT' in line:
-            total_docs_markedRel = line.split(' ')[-1].replace('\n','')
-        #This is to extract the total time taken
-        if 'ACTION' in line:
-            total_time_taken = line.split(' ')[3]
+        return (relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel,
+                total_time_taken)
 
+    def appendCurrentSimData(self):
 
-    return (relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel, total_time_taken)
+        logFile = open(os.path.join(self.curr_root, self.curr_fileName), 'r')
+        outFile = open(os.path.join(self.curr_root, self.curr_fileName[:-4] + '.out'), 'r')
 
-def extractOutFileInfo(fileIn):
-    """
-    Given the outFile of a Run, extract & return:
-      - MAP value
-      - P values (@5, @10, @15, @20, @30)
-    """
-    map1 =''
-    p5 = ''
-    p10 = ''
-    p15 = ''
-    p20 = ''
-    p30 = ''
+        relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel, total_time_taken = self.extractLogFileInfo(
+            logFile)
+        map1, p5, p10, p15, p20, p30 = self.extractOutFileInfo(outFile)
 
-    for line in fileIn:
+        # Extract topic from fileName
+        topic = self.curr_fileName.split('-')[2]
 
-        if 'map' in line and 'gm_map' not in line:
-            map1 =line.split('\t')[-1].replace('\n','')
-        elif 'P_5 ' in line:
-            p5 = line.split('\t')[-1].replace('\n','')
-        elif 'P_10 ' in line:
-            p10 = line.split('\t')[-1].replace('\n','')
-        elif 'P_15 ' in line:
-            p15 = line.split('\t')[-1].replace('\n','')
-        elif 'P_20 ' in line:
-            p20 = line.split('\t')[-1].replace('\n','')
-        elif 'P_30 ' in line:
-            p30 = line.split('\t')[-1].replace('\n','')
+        # Caclulate the CG value
+        cgValue = self.cgCalculator(relevantDocs, topic)
+        mean_depth = self.meanDepthCalculator(total_snips_examined, total_queries_issued)
 
-    return (map1,p5,p10,p15,p20,p30)
+        # Extract some more Information from fileName & root path
+        titles = self.curr_fileName.split('_')
+        run = self.curr_root.split('/')[-1]
+
+        model = titles[1]
+        queryGenerator = titles[3]
+        stoppingStrategy = titles[4].split('-')[0]
+        stoppingStrategyVal = titles[4].split('-')[1][:-4]
+
+        self.data_out.append(run + ',' + model + ',' + topic + ',' + queryGenerator + ',' + stoppingStrategy + ','
+                             + stoppingStrategyVal + ',' + str(cgValue) + ',' + total_queries_issued + ',' +
+                             total_snips_examined + ',' + total_docs_examined + ',' + total_docs_markedRel + ',' + mean_depth + ',' + total_time_taken
+                             + ',' + map1 + ',' + p5 + ',' + p10 + ',' + p15 + ','
+                             + p20 + ',' + p30)
+
+    def extractOutFileInfo(self, fileIn):
+        """
+        Given the outFile of a Run, extract & return:
+          - MAP value
+          - P values (@5, @10, @15, @20, @30)
+        """
+        map1 = '0'
+        p5 = '0'
+        p10 = '0'
+        p15 = '0'
+        p20 = '0'
+        p30 = '0'
+
+        for line in fileIn:
+
+            if 'map' in line and 'gm_map' not in line:
+                map1 = line.split('\t')[-1].replace('\n', '')
+            elif 'P_5 ' in line:
+                p5 = line.split('\t')[-1].replace('\n', '')
+            elif 'P_10 ' in line:
+                p10 = line.split('\t')[-1].replace('\n', '')
+            elif 'P_15 ' in line:
+                p15 = line.split('\t')[-1].replace('\n', '')
+            elif 'P_20 ' in line:
+                p20 = line.split('\t')[-1].replace('\n', '')
+            elif 'P_30 ' in line:
+                p30 = line.split('\t')[-1].replace('\n', '')
+
+        return (map1, p5, p10, p15, p20, p30)
+
 
 def usage(filename):
     """
@@ -132,58 +181,22 @@ def usage(filename):
     print "  <file_out>: specify a directory and name for the output CSV file i.e. /home/out.csv."
 
 
-if __name__ == '__main__':
+def main():
     if len(sys.argv) > 3 and len(sys.argv) < 5:
 
-        data = []
-        dataDict ={}
-        indir = sys.argv[1]
-        simiirDir = sys.argv[2]
-        fileOutPath = sys.argv[3]
+        simAnalyser = SimulatorOutputAnalyser(sys.argv[1], sys.argv[2], sys.argv[3])
 
-        #Iterates through all the .log files in the output dir
-        for root, dirs, filenames in os.walk(indir):
+        # Iterates through all the .log files in the output dir
+        for root, dirs, filenames in os.walk(simAnalyser.input_dir):
             for fileName in filenames:
                 if '.log' in fileName:
+                    simAnalyser.curr_root = root
+                    simAnalyser.curr_fileName = fileName
 
-                    logFile = open(os.path.join(root, fileName),'r')
-                    outFile = open(os.path.join(root,fileName[:-4]+'.out'),'r')
-                    relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel, total_time_taken = extractLogFileInfo(logFile)
-                    map1, p5, p10, p15, p20, p30 = extractOutFileInfo(outFile)
+                    simAnalyser.appendCurrentSimData()
 
-
-                    #Extract topic from fileName
-                    topic = fileName.split('-')[2]
-                    #Caclulate the CG value
-                    cgValue = cgCalculator(simiirDir,relevantDocs, topic)
-
-                    #Extract some more Information from fileName & root path
-                    titles = fileName.split('_')
-                    run = root.split('/')[-1]
-                    model = titles[1]
-                    queryGenerator = titles[3]
-                    stoppingStrategy = titles[4].split('-')[0]
-                    stoppingStrategyVal = titles[4].split('-')[1][:-4]
-
-                    #Calculate mean depth value
-
-                    if total_snips_examined =='' or total_queries_issued == '':
-                        mean_depth = ''
-                    else:
-                        mean_depth = float(total_snips_examined)/float(total_queries_issued)
-                        mean_depth = str(mean_depth)
-
-                    #Append the information in a list
-                    data.append(run + ',' + model + ',' + topic + ',' + queryGenerator + ',' +stoppingStrategy + ','
-                                + stoppingStrategyVal + ',' + str(cgValue) + ',' + total_queries_issued + ',' +
-                                total_snips_examined + ',' + total_docs_examined + ',' + total_docs_markedRel + ',' + mean_depth + ',' + total_time_taken
-                                + ',' + map1 + ',' + p5 + ',' + p10 + ',' + p15 + ','
-                                + p20 + ',' + p30)
-
-
-
-        writeCsvFile(data, fileOutPath)
-        #clearOutFolder(indir)
+        simAnalyser.writeCsvFile()
+        # clearOutFolder(indir)
         sys.exit(0)
 
     # Invalid number of command-line parameters, print usage.
@@ -191,3 +204,5 @@ if __name__ == '__main__':
     sys.exit(1)
 
 
+if __name__ == '__main__':
+    main()
