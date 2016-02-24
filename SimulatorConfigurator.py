@@ -417,13 +417,17 @@ class SimulatorConfigurator():
         For the document Classifier
         """
         for textClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']:
-            textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,textClassifier['attribute'][0]['@value'])
+            if 'attribute' in textClassifier:
+                print textClassifier['attribute']
+                textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,textClassifier['attribute'][0]['@value'])
 
         """
         For the snippet Classifier
         """
         for snippetClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']:
-            snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,snippetClassifier['attribute'][0]['@value'])
+            if 'attribute' in snippetClassifier:
+                print snippetClassifier['attribute']
+                snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,snippetClassifier['attribute'][0]['@value'])
 
     def generateSimulationPathsFile(self):
         """

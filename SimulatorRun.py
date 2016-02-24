@@ -20,15 +20,6 @@ class SimulatorRun():
         self.list_of_SimConfigs = []
         self.listOfRuns = []
 
-    # def read_file_to_string(filename):
-    #     """
-    #     Given a filename, opens the file and returns the contents as a string.
-    #     """
-    #     with open (filename, "r") as myfile:
-    #         data=myfile.read().replace('\n', '')
-    #
-    #     return data
-
     def readSimulPathsFile(self):
         """
         Get the Simulation Config. Paths from the file specified and append them to a list
@@ -82,7 +73,7 @@ class SimulatorRun():
 
         finished_processes = []
 
-        print 'Number of Simulations to be run: ' + str(len(self.listOfRuns)) + '=================================================================='
+        print 'Number of Simulations to be run: ' + str(len(self.listOfRuns)) + '\n=================================================================='
 
         while (True):
 
