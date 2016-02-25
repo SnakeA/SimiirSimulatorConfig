@@ -80,7 +80,7 @@ For all the directories that are specified in the file (except baseDir which sho
             <attribute is_argument="true" name="depth" type="integer" value="15"/>
        </class>
        <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="20"/>
+            <attribute is_argument="true" name="depth" type="integer" value="20"/>z
        </class>
    </stoppingDecisionMaker>
 

@@ -418,7 +418,6 @@ class SimulatorConfigurator():
         """
         for textClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']:
             if 'attribute' in textClassifier:
-                print textClassifier['attribute']
                 textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,textClassifier['attribute'][0]['@value'])
 
         """
@@ -426,7 +425,6 @@ class SimulatorConfigurator():
         """
         for snippetClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']:
             if 'attribute' in snippetClassifier:
-                print snippetClassifier['attribute']
                 snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,snippetClassifier['attribute'][0]['@value'])
 
     def generateSimulationPathsFile(self):
@@ -452,10 +450,10 @@ def main():
 
     if len(sys.argv) > 2 and len(sys.argv) < 4:
 
-        #simiirPath = os.path.abspath(sys.argv[2])
+        simiirPathabs = os.path.abspath(sys.argv[2])
         #dict_repr = build_dictionary(sys.argv[1])
 
-        sim1 = SimulatorConfigurator(sys.argv[1],sys.argv[2])
+        sim1 = SimulatorConfigurator(sys.argv[1],simiirPathabs)
 
         sim1.build_dictionary()
         #componentsPath = os.path.join(simiirPath,'simiir')

@@ -5,9 +5,18 @@ import sys
 import time
 import xml.dom.minidom
 from utilities import read_file_to_string
+import datetime as dt
 
 
 
+# def read_file_to_string(filename):
+#     """
+#     Given a filename, opens the file and returns the contents as a string.
+#     """
+#     with open (filename, "r") as myfile:
+#         data=myfile.read().replace('\n', '')
+#
+#     return data
 
 class SimulatorRun():
 
@@ -72,6 +81,17 @@ class SimulatorRun():
         simultProcesses = []
 
         finished_processes = []
+        n1=dt.datetime.now()
+
+        FNULL = open(os.devnull, 'w')
+
+
+
+        fileLogDir = os.path.dirname(self.simulationsPath)
+        log1 = open(fileLogDir + '/log.txt', 'a')
+
+        # Set working Dir to simiir dir
+        os.chdir(os.path.dirname(sys.argv[2]))
 
         print 'Number of Simulations to be run: ' + str(len(self.listOfRuns)) + '\n=================================================================='
 
@@ -82,7 +102,7 @@ class SimulatorRun():
             if curr_position is None:
                 curr_position = 0
                 while (len(simultProcesses) < self.numOfProcesses):
-                    simultProcesses.append(subprocess.Popen(['python', 'run_simiir.py', self.listOfRuns[curr_position]],stdout=subprocess.PIPE, stderr=subprocess.PIPE))
+                    simultProcesses.append(subprocess.Popen(['python', 'run_simiir.py', self.listOfRuns[curr_position]],stdin=FNULL, stdout=FNULL,stderr=log1,))
                     curr_position += 1
                     if (curr_position == len(self.listOfRuns)):
                         break
@@ -109,6 +129,7 @@ class SimulatorRun():
                 # if all the process are still working
                 # sleep for a while
                 if len(process_done_indx) == 0:
+                    print 'Time elapsed: ' + str((dt.datetime.now() - n1).seconds)
                     time.sleep(3)
                     print 'Sleep for a while...'
                     continue
@@ -128,7 +149,7 @@ class SimulatorRun():
                 # Otherwise (if a process is finished), create a new one with the appropriate files
                 for index in process_done_indx:
                     print 'Starting Next Process...'
-                    simultProcesses[index] = subprocess.Popen(['python', 'run_simiir.py', self.listOfRuns[curr_position]],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    simultProcesses[index] = subprocess.Popen(['python', 'run_simiir.py', self.listOfRuns[curr_position]],stdin=FNULL, stdout=FNULL,stderr=log1, )
                     curr_position += 1
                     if (curr_position == len(self.listOfRuns)):
                         break
@@ -162,8 +183,7 @@ def main():
         simRunner.readSimulPathsFile()
         simRunner.prepareConfigFile()
 
-        # Set working Dir to simiir dir
-        os.chdir(os.path.dirname(sys.argv[2]))
+
         # Run simulations
         simRunner.simRun()
 
