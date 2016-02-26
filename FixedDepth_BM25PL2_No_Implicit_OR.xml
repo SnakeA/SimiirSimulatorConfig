@@ -89,19 +89,28 @@ For all the directories that are specified in the file (except baseDir which sho
        </class>
    </queryGenerator>
 
-	<textClassifiers>
-		<snippetClassifier class="InformedTrecTextClassifier">
+    <textClassifiers>
+       <!--
+        These are the probabilities of clicking a relevant snippet and clicking a non-relevant snippet
+        -->
+      <snippetClassifier>
+          <class name="InformedTrecTextClassifier">
 			<attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
             <attribute name="qrel_file" type="string" value="example_data/qrels/prerolled/prerolled-trec2005-1.click" is_argument="true" />
 			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
-		</snippetClassifier>
-
-		<documentClassifier class="InformedTrecTextClassifier">
+          </class>
+      </snippetClassifier>
+        <!--
+        These are the probabilities of marking a relevant document and marking a non-relevant document
+        -->
+      <documentClassifier>
+          <class name ="InformedTrecTextClassifier">
 			<attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
             <attribute name="qrel_file" type="string" value="example_data/qrels/prerolled/prerolled-trec2005-1.mark" is_argument="true" />
 			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
-		</documentClassifier>
-    </textClassifiers>
+          </class>
+      </documentClassifier>
+   </textClassifiers>
 
    <stoppingDecisionMaker>
        <!--
