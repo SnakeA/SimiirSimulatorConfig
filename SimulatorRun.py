@@ -183,9 +183,11 @@ def main():
         simRunner.readSimulPathsFile()
         simRunner.prepareConfigFile()
 
+        user_In = raw_input("Appropriate Files and Folders have been Created.\nMake changes if needed and enter 's' to Run the experiments: ")
 
-        # Run simulations
-        simRunner.simRun()
+        if user_In == 's':
+            # Run simulations
+            simRunner.simRun()
 
         sys.exit(0)
 
