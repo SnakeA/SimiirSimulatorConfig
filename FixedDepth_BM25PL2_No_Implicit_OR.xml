@@ -3,7 +3,7 @@ For all the directories that are specified in the file (except baseDir which sho
 , assume that they will be appended on the full simiir dir (specified as a cmd line arg)
 -->
 
-<simulationConfiguration id="" baseDir="/home/angelos/Desktop/TrecTestPL2BM25_IMPLICITOR">>
+<simulationConfiguration id="" baseDir="/home/angelos/Desktop/FixedDepth_BM25PL2_TrecTopicQueryGen_NoImplicitOR">>
 
     <topics>
         <!--
@@ -68,13 +68,13 @@ For all the directories that are specified in the file (except baseDir which sho
         -->
         <class name="WhooshSearchInterface">
             <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
-            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="0" is_argument="true" />
              <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
             <attribute name ="model" type="integer" value="1" is_argument="true" />
         </class>
         <class name="WhooshSearchInterface">
             <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
-            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="0" is_argument="true" />
              <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
             <attribute name ="model" type="integer" value="2" is_argument="true" />
         </class>
@@ -89,29 +89,38 @@ For all the directories that are specified in the file (except baseDir which sho
        </class>
    </queryGenerator>
 
-   <textClassifiers>
-       <!--
-        These are the probabilities of clicking a relevant snippet and clicking a non-relevant snippet
-        -->
-      <snippetClassifier>
-          <class name="TrecTextClassifier">
-          </class>
-      </snippetClassifier>
-        <!--
-        These are the probabilities of marking a relevant document and marking a non-relevant document
-        -->
-      <documentClassifier>
-          <class name ="TrecTextClassifier">
-          </class>
-      </documentClassifier>
-   </textClassifiers>
+	<textClassifiers>
+		<snippetClassifier class="InformedTrecTextClassifier">
+			<attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
+            <attribute name="qrel_file" type="string" value="example_data/qrels/prerolled/prerolled-trec2005-1.click" is_argument="true" />
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
+		</snippetClassifier>
+
+		<documentClassifier class="InformedTrecTextClassifier">
+			<attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
+            <attribute name="qrel_file" type="string" value="example_data/qrels/prerolled/prerolled-trec2005-1.mark" is_argument="true" />
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
+		</documentClassifier>
+    </textClassifiers>
 
    <stoppingDecisionMaker>
        <!--
         This is the stopping decision strategy.
         -->
        <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="1000"/>
+            <attribute is_argument="true" name="depth" type="integer" value="5"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="10"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="15"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="20"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="25"/>
        </class>
    </stoppingDecisionMaker>
 
