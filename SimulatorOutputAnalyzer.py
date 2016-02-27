@@ -131,7 +131,7 @@ class SimulatorOutputAnalyser():
         model = titles[1]
         queryGenerator = titles[3]
         stoppingStrategy = titles[4].split('-')[0]
-        stoppingStrategyVal = titles[4].split('-')[1][:-4]
+        stoppingStrategyVal = titles[4].split('-')[1]
 
         self.data_out.append(run + ',' + model + ',' + topic + ',' + queryGenerator + ',' + stoppingStrategy + ','
                              + stoppingStrategyVal + ',' + str(cgValue) + ',' + total_queries_issued + ',' +
