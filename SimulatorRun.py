@@ -21,13 +21,16 @@ import datetime as dt
 class SimulatorRun():
 
 
-    def __init__(self, simulationsPath, simiirWorkingPath, numOfRuns):
+    def __init__(self, simulationsPath, simiirWorkingPath, numOfRuns, flag):
         self.simulationsPath = simulationsPath
         self.simiirWorkingPath = simiirWorkingPath
         self.numOfRuns = numOfRuns
         self.numOfProcesses = 4
         self.list_of_SimConfigs = []
+        self.list_of_UserConfigs = [] # when flag is used
         self.listOfRuns = []
+        self.listOfRefinedUserConfig = [] # when flag is used
+        self.flag = flag
 
     def readSimulPathsFile(self):
         """
@@ -39,11 +42,53 @@ class SimulatorRun():
 
         f.close()
 
+        with open(os.path.join(os.path.dirname(self.simulationsPath),'userPaths.txt'),'r') as f:
+            for line in f:
+                self.list_of_UserConfigs.append(line.replace("\n",""))
+        f.close()
+
     def prepareConfigFile(self):
         """
         Take a simulation configuration (path) and according to the number of runs needed created the appropriate dirs
         and temporary simulation configuration files and append their full path to a list
         """
+
+        # If flag is used create users with preRolled qrles files
+        if self.flag == '-u':
+
+            runId =1
+            for userConfPath in self.list_of_UserConfigs:
+                i = 1
+                while i <= self.numOfRuns:
+                    # Read the current User File
+                    fileData1 = read_file_to_string(userConfPath)
+
+                    #Append the number of PreRolled File
+                    currRun_fileData1 = fileData1.replace('{9}',str(i))
+                    xmlData1 = xml.dom.minidom.parseString(currRun_fileData1)
+
+
+                    tempFileName = os.path.basename(userConfPath)
+
+                    tempFileName = tempFileName.split('-')[0] + '-' + tempFileName.split('-')[1]
+
+                    baseDirect = os.path.dirname(userConfPath)
+
+
+                    newFileName =  os.path.join(baseDirect,tempFileName+'_ID-'+str(runId) + '.xml')
+
+                    #Write the file
+                    with open(newFileName, "w") as f:
+                        f.write(xmlData1.toprettyxml())
+                    f.close()
+
+
+                    #Append path to list
+                    self.listOfRefinedUserConfig.append(newFileName)
+                    i = i + 1
+                    runId = runId +1
+
+
         for simConfigPath in self.list_of_SimConfigs:
 
             fileData = read_file_to_string(simConfigPath)
@@ -54,6 +99,10 @@ class SimulatorRun():
 
             currRun = 1
 
+            #userConfig counter
+            counter = 1
+
+            const = 0
             while (currRun <= self.numOfRuns):
 
                 # Format the baseDir in the current Simulation Configuration File
@@ -61,6 +110,24 @@ class SimulatorRun():
                 currRun_fileData = currRun_fileData.replace('{1}',fileName)
                 currRun_fileData = currRun_fileData.replace('{2}', str(currRun))
 
+
+                # If flag is set append appropriate user configurations to each simulation Configuration file
+                if self.flag == '-u':
+
+                    entry_list = ""
+                    incr = 0
+
+
+                    while counter <= ((len(self.listOfRefinedUserConfig)/self.numOfRuns) * currRun):
+                        user_markup = read_file_to_string('base_files/user_entry.xml')
+                        print const+incr
+                        entry_list = "{0}{1}".format(entry_list, user_markup.replace('{0}',self.listOfRefinedUserConfig[const + incr]))
+                        counter = counter + 1
+                        incr = incr + self.numOfRuns
+
+
+                    currRun_fileData = currRun_fileData.replace('{3}',entry_list)
+                const = const +1
 
                 xmlData = xml.dom.minidom.parseString(currRun_fileData)
                 newBaseDir = os.path.join(baseDir, 'output/'+fileName+'/'+str(currRun))
@@ -91,7 +158,7 @@ class SimulatorRun():
         log1 = open(fileLogDir + '/log.txt', 'a')
 
         # Set working Dir to simiir dir
-        os.chdir(os.path.dirname(sys.argv[2]))
+        os.chdir(os.path.dirname(self.simiirWorkingPath))
 
         print 'Number of Simulations to be run: ' + str(len(self.listOfRuns)) + '\n=================================================================='
 
@@ -162,15 +229,16 @@ def usage(filename):
         """
         Prints the usage to stdout.
         """
-        print "Usage: python {0} <simulation_paths_file> <simiir_workingDir> <num_of_runs>".format(filename)
+        print "Usage: python {0} <simulation_paths_file> <simiir_workingDir> <num_of_runs>(optional) <-u>".format(filename)
         print "Where:"
         print "  <simulation_paths_file>: the text file which contains the paths to the simulation configuration files."
-        print "  <simiir_workingDir>: the path to the simiir toolkit to be set as the current working directory (where the run_python.py exists)."
+        print "  <simiir_workingDir>: the path to the working Dir of the simiir toolkit. (i.e. home/simiir/simiir)"
         print "  <num_of_runs>:(Default: 1) Number that each simulation will run."
+        print "  <-u>: This flag is used when user configurations will be appended at a later state (i.e. with PreRolled Qrels)"
 
 
 def main():
-    if len(sys.argv) > 2 and len(sys.argv) < 5:
+    if len(sys.argv) > 2:
 
         #Default Number of runs
         numOfRuns = 1
@@ -178,9 +246,21 @@ def main():
         if len(sys.argv) > 3:
             numOfRuns = int(sys.argv[3])
 
-        simRunner = SimulatorRun(sys.argv[1], sys.argv[2], numOfRuns)
+        if len(sys.argv) > 4:
+
+            if sys.argv[4] == '-u':
+                flag = '-u'
+            else:
+                flag =''
+
+
+        #simiirPath = os.path.abspath(sys.argv[2])
+
+
+        simRunner = SimulatorRun(os.path.abspath(sys.argv[1]), sys.argv[2], numOfRuns, flag)
 
         simRunner.readSimulPathsFile()
+
         simRunner.prepareConfigFile()
 
         user_In = raw_input("Appropriate Files and Folders have been Created.\nMake changes if needed and enter 's' to Run the experiments: ")

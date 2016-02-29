@@ -54,7 +54,11 @@ For all the directories that are specified in the file (except baseDir which sho
         -->
       <snippetClassifier>
           <class name="InformedTrecTextClassifier">
-             <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
+             <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/test1.qrels"/>
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
+          </class>
+          <class name="InformedTrecTextClassifier">
+             <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/test2.qrels"/>
 			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
           </class>
       </snippetClassifier>
@@ -63,7 +67,11 @@ For all the directories that are specified in the file (except baseDir which sho
         -->
       <documentClassifier>
           <class name ="InformedTrecTextClassifier">
-              <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/trec2005.qrels.all"/>
+              <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/test1.qrels"/>
+              <attribute name="data_handler" type="integer" value="0" is_argument="false" />
+          </class>
+          <class name ="InformedTrecTextClassifier">
+              <attribute is_argument="true" name="qrel_file" type="string" value="/example_data/qrels/test2.qrels"/>
               <attribute name="data_handler" type="integer" value="0" is_argument="false" />
           </class>
       </documentClassifier>
@@ -75,12 +83,6 @@ For all the directories that are specified in the file (except baseDir which sho
         -->
        <class name ="FixedDepthDecisionMaker">
             <attribute is_argument="true" name="depth" type="integer" value="10"/>
-       </class>
-       <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="15"/>
-       </class>
-       <class name ="FixedDepthDecisionMaker">
-            <attribute is_argument="true" name="depth" type="integer" value="20"/>z
        </class>
    </stoppingDecisionMaker>
 

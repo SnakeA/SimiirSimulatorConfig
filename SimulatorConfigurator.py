@@ -9,7 +9,7 @@ from utilities import read_file_to_string, get_available_classes
 
 class SimulatorConfigurator():
 
-    def __init__(self, inputXMLfile, simiirPath):
+    def __init__(self, inputXMLfile, simiirPath, flag):
         self._simiirPath = simiirPath
         self._inputXMLfile = inputXMLfile
         self._simulationBaseDir = ''
@@ -18,6 +18,7 @@ class SimulatorConfigurator():
         self.simulConfigPaths = []
         self._userPermutations = []
         self._simulationPermutations = []
+        self._userFlag = flag
 
     def build_dictionary(self):
             """
@@ -119,14 +120,17 @@ class SimulatorConfigurator():
 
 
 
+
         self._userPermutations = list(itertools.product(query_generators,
-                                      snippet_classifiers,
-                                      document_classifiers,
-                                      decision_makers,
-                                      loggers,
-                                      search_contexts))
+                                                        snippet_classifiers,
+                                                        document_classifiers,
+                                                        decision_makers,
+                                                        loggers,
+                                                        search_contexts))
+
 
         self._simulationPermutations = list(itertools.product(search_interfaces))
+
 
 
     def generate_topics(self):
@@ -206,6 +210,7 @@ class SimulatorConfigurator():
 
         componentsPath = os.path.join(self._simiirPath,'simiir')
 
+        j=1
         for iteration in self._userPermutations:
             user_markup_components = {
                 'id': None,
@@ -220,6 +225,14 @@ class SimulatorConfigurator():
             """
             Extract the components for the user configuration for this iteration
             """
+
+
+
+            # try: DELETE
+            #     if  iteration[1]['attribute'][0]['@value'].split('.')[0] != iteration[2]['attribute'][0]['@value'].split('.')[0]:
+            #         continue
+            # except:
+            #     print "key Error"
 
             for component in iteration:
 
@@ -240,9 +253,11 @@ class SimulatorConfigurator():
 
 
             # File Name includes queryGenerator_StoppinStrategy-Value
-            fileName = '/user_{0}_{1}-{2}.xml'.format(user_markup_components['queryGenerator']['class'],
+            fileName = '/user_{0}_{1}-{2}-{3}.xml'.format(user_markup_components['queryGenerator']['class'],
                                                      user_markup_components['stoppingDecisionMaker']['class'],
-                                                     user_markup_components['stoppingDecisionMaker']['attributes'].split('value="')[1].split('"')[0])
+                                                     user_markup_components['stoppingDecisionMaker']['attributes'].split('value="')[1].split('"')[0],
+                                                      str(j))
+            j=j+1
 
             # Extract User Id from File name
             user_base_id = fileName[6:-4]
@@ -350,7 +365,13 @@ class SimulatorConfigurator():
             retrModel = retrModels[retrModelVal]
 
             #Generate users and topics
-            users = self.generate_user_entries()
+
+            #If user flag set, users will be set to sim.Config files at a later state
+            if self._userFlag == '-u':
+                users = "{3}"
+            else:
+                users = self.generate_user_entries()
+
             topics = self.generate_topics()
 
             """
@@ -417,14 +438,18 @@ class SimulatorConfigurator():
         For the document Classifier
         """
         for textClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']:
-            if 'attribute' in textClassifier:
+            if 'attribute' not in textClassifier:
+                break
+            else:
                 textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,textClassifier['attribute'][0]['@value'])
 
         """
         For the snippet Classifier
         """
         for snippetClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']:
-            if 'attribute' in snippetClassifier:
+            if 'attribute' not in snippetClassifier:
+                break
+            else:
                 snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,snippetClassifier['attribute'][0]['@value'])
 
     def generateSimulationPathsFile(self):
@@ -437,23 +462,37 @@ class SimulatorConfigurator():
                     file.write(SimulationPath+"\n")
         file.close()
 
+        if self._userFlag == '-u':
+            write_path = os.path.join(self._simulationBaseDir,'userPaths.txt')
+            with open(write_path, "w") as file: # DELETE change to os.path.join()
+                    for userPath in self.userConfigPaths:
+                        file.write(userPath+"\n")
+            file.close()
+
+
 def usage(filename):
     """
     Prints the usage to stdout.
     """
-    print "Usage: python {0} <xml_source> <simiir_path>".format(filename)
+    print "Usage: python {0} <xml_source> <simiir_path> <-u>(optional)".format(filename)
     print "Where:"
     print "  <xml_source>: the source XML file from which to generate simulation configuration files. See example.xml."
     print "  <simiir_path>: the path to the simiir toolkit."
+    print "  <-u>: This flag is used when user configurations will be appended at a later state (i.e. with PreRolled Qrels)"
+
 
 def main():
 
-    if len(sys.argv) > 2 and len(sys.argv) < 4:
+    if len(sys.argv) > 2:
 
         simiirPathabs = os.path.abspath(sys.argv[2])
         #dict_repr = build_dictionary(sys.argv[1])
+        if len(sys.argv) == 4:
+            flag = sys.argv[3]
+        else:
+            flag = ''
 
-        sim1 = SimulatorConfigurator(sys.argv[1],simiirPathabs)
+        sim1 = SimulatorConfigurator(sys.argv[1],simiirPathabs, flag)
 
         sim1.build_dictionary()
         #componentsPath = os.path.join(simiirPath,'simiir')
