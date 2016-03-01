@@ -42,10 +42,11 @@ class SimulatorRun():
 
         f.close()
 
-        with open(os.path.join(os.path.dirname(self.simulationsPath),'userPaths.txt'),'r') as f:
-            for line in f:
-                self.list_of_UserConfigs.append(line.replace("\n",""))
-        f.close()
+        if self.flag == '-u':
+            with open(os.path.join(os.path.dirname(self.simulationsPath),'userPaths.txt'),'r') as f:
+                for line in f:
+                    self.list_of_UserConfigs.append(line.replace("\n",""))
+            f.close()
 
     def prepareConfigFile(self):
         """
@@ -251,7 +252,10 @@ def main():
             if sys.argv[4] == '-u':
                 flag = '-u'
             else:
-                flag =''
+                flag = ''
+
+        else:
+            flag =''
 
 
         #simiirPath = os.path.abspath(sys.argv[2])
