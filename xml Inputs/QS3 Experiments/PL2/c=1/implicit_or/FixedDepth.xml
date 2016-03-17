@@ -1,0 +1,149 @@
+<!--
+For all the directories that are specified in the file (except baseDir which should include the full path)
+, assume that they will be appended on the full simiir dir (specified as a cmd line arg)
+-->
+
+<simulationConfiguration id="" baseDir="/users/level4/1200048c/experimentsQS3/PL2_100_ImplicitOR-FixedDepth">>
+
+    <topics>
+        <!--
+        These are the topics that each simulated user will complete
+        -->
+        <topic id="303" filename="/example_data/topics/topic.303" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="307" filename="/example_data/topics/topic.307" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="310" filename="/example_data/topics/topic.310" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="314" filename="/example_data/topics/topic.314" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="322" filename="/example_data/topics/topic.322" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="325" filename="/example_data/topics/topic.325" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="330" filename="/example_data/topics/topic.330" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="336" filename="/example_data/topics/topic.336" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="341" filename="/example_data/topics/topic.341" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="344" filename="/example_data/topics/topic.344" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="345" filename="/example_data/topics/topic.345" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="347" filename="/example_data/topics/topic.347" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="353" filename="/example_data/topics/topic.353" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="354" filename="/example_data/topics/topic.354" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="362" filename="/example_data/topics/topic.362" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="363" filename="/example_data/topics/topic.363" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="367" filename="/example_data/topics/topic.367" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="372" filename="/example_data/topics/topic.372" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="374" filename="/example_data/topics/topic.374" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="375" filename="/example_data/topics/topic.375" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="378" filename="/example_data/topics/topic.378" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="383" filename="/example_data/topics/topic.383" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="389" filename="/example_data/topics/topic.389" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="393" filename="/example_data/topics/topic.393" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="394" filename="/example_data/topics/topic.394" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="397" filename="/example_data/topics/topic.397" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="399" filename="/example_data/topics/topic.399" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="401" filename="/example_data/topics/topic.401" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="404" filename="/example_data/topics/topic.404" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="408" filename="/example_data/topics/topic.408" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="409" filename="/example_data/topics/topic.409" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="416" filename="/example_data/topics/topic.416" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="419" filename="/example_data/topics/topic.419" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="426" filename="/example_data/topics/topic.426" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="427" filename="/example_data/topics/topic.427" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="433" filename="/example_data/topics/topic.433" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="435" filename="/example_data/topics/topic.435" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="436" filename="/example_data/topics/topic.436" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="439" filename="/example_data/topics/topic.439" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="443" filename="/example_data/topics/topic.443" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="448" filename="/example_data/topics/topic.448" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="622" filename="/example_data/topics/topic.622" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="625" filename="/example_data/topics/topic.625" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="638" filename="/example_data/topics/topic.638" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="639" filename="/example_data/topics/topic.639" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="648" filename="/example_data/topics/topic.648" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="650" filename="/example_data/topics/topic.650" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="651" filename="/example_data/topics/topic.651" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="658" filename="/example_data/topics/topic.658" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+        <topic id="689" filename="/example_data/topics/topic.689" qrelsFilename="/example_data/qrels/trec2005.qrels" />
+
+    </topics>
+
+    <searchInterface>
+        <!--
+        This is the search interface that the simulated users will interact with
+        -->
+        <class name="WhooshSearchInterface">
+            <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
+            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
+             <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
+            <attribute name ="model" type="integer" value="2" is_argument="true" />
+            <attribute name="pval" type="float" value="1" is_argument="true" />
+
+        </class>
+	</searchInterface>
+
+   <queryGenerator>
+       <!--
+        This is the query generator strategy
+        -->
+       <class name="TriTermQueryGenerator">
+           <attribute name="stopword_file" type="string" value="/example_data/terms/stopwords.txt" is_argument="true" />
+       </class>
+   </queryGenerator>
+
+    <textClassifiers>
+       <!--
+        These are the probabilities of clicking a relevant snippet and clicking a non-relevant snippet
+        -->
+      <snippetClassifier>
+          <class name="InformedTrecTextClassifier">
+            <attribute name="qrel_file" type="string" value="/example_data/qrels/prerolled/prerolled-trec2005-{9}.click" is_argument="true" />
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
+          </class>
+      </snippetClassifier>
+        <!--
+        These are the probabilities of marking a relevant document and marking a non-relevant document
+        -->
+      <documentClassifier>
+          <class name ="InformedTrecTextClassifier">
+            <attribute name="qrel_file" type="string" value="/example_data/qrels/prerolled/prerolled-trec2005-{9}.mark" is_argument="true" />
+			<attribute name="data_handler" type="integer" value="0" is_argument="false" />
+          </class>
+      </documentClassifier>
+   </textClassifiers>
+
+   <stoppingDecisionMaker>
+       <!--
+        This is the stopping decision strategy.
+        -->
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="5"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="10"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="15"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="20"/>
+       </class>
+       <class name ="FixedDepthDecisionMaker">
+            <attribute is_argument="true" name="depth" type="integer" value="25"/>
+       </class>
+   </stoppingDecisionMaker>
+
+   <logger>
+       <!--
+        These are the costs for running a simulation
+        -->
+       <class name ="FixedCostLogger">
+          <attribute is_argument="true" name="time_limit" type="integer" value="1200"/>
+          <attribute is_argument="true" name="query_cost" type="float" value="15.1"/>
+          <attribute is_argument="true" name="document_cost" type="float" value="21.45"/>
+          <attribute is_argument="true" name="snippet_cost" type="float" value="1.3"/>
+          <attribute is_argument="true" name="serp_results_cost" type="float" value="1.1"/>
+          <attribute is_argument="true" name="mark_document_cost" type="float" value="2.57"/>
+       </class>
+   </logger>
+
+   <searchContext>
+       <class name ="SearchContext">
+           <attribute is_argument="false" name="relevance_revision" type="integer" value="1" />
+       </class>
+   </searchContext>
+</simulationConfiguration>

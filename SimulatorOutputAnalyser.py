@@ -1,4 +1,4 @@
-__author__ = 'angelos'
+__author__ = 'Angelos Constantinides'
 import os
 import csv
 import sys
@@ -109,6 +109,9 @@ class SimulatorOutputAnalyser():
                 total_time_taken)
 
     def appendCurrentSimData(self):
+        """
+        Parse the necessary information and append them into a data structure
+        """
 
         logFile = open(os.path.join(self.curr_root, self.curr_fileName), 'r')
         outFile = open(os.path.join(self.curr_root, self.curr_fileName[:-4] + '.out'), 'r')
@@ -177,7 +180,7 @@ def usage(filename):
     print "Usage: python {0} <simiir_path>".format(filename)
     print "Where:"
     print "  <input_dir>: the path to the output files of the simulator i.e. /home/Simulator/output."
-    print "  <simiir_path>: the path to the simiir toolkit i.e. /home/simiir."
+    print "  <simiir_path>: the path to the simiir toolkit. (i.e. home/simiir)"
     print "  <file_out>: specify a directory and name for the output CSV file i.e. /home/out.csv."
 
 
@@ -196,7 +199,8 @@ def main():
                     simAnalyser.appendCurrentSimData()
 
         simAnalyser.writeCsvFile()
-        # clearOutFolder(indir)
+        print "The output file was successfully created to the following path: " + simAnalyser.file_out
+
         sys.exit(0)
 
     # Invalid number of command-line parameters, print usage.

@@ -1,3 +1,4 @@
+__author__ = 'Angelos Constantinides'
 import os
 import itertools
 import sys
@@ -67,9 +68,10 @@ class SimulatorConfigurator():
 
 
     def tidy_dictionary(self):
-
         """
         Create a list for the specified reference and add type
+        (Adapted from https://github.com/leifos/simiir/blob/master/simiir/sim_config_generator/sim_config_generator.py
+        & modified as required)
         """
 
         def to_list(ref, specified_type):
@@ -109,6 +111,8 @@ class SimulatorConfigurator():
         """
         Contains a list of tuples, with each tuple containing dictionaries representing a particular combination.
         Note that topics are ignored; these are stored within the simulation configuration file.
+        (Adapted from https://github.com/leifos/simiir/blob/master/simiir/sim_config_generator/sim_config_generator.py
+        & modified as required)
         """
         query_generators = self._dictRepr['simulationConfiguration']['queryGenerator']
         snippet_classifiers = self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']
@@ -127,7 +131,6 @@ class SimulatorConfigurator():
                                                         decision_makers,
                                                         loggers,
                                                         search_contexts))
-
 
         self._simulationPermutations = list(itertools.product(search_interfaces))
 
@@ -170,6 +173,7 @@ class SimulatorConfigurator():
     def create_attribute_markup(self, attribute_dict):
         """
         Given a dictionary representing an attribute, returns the associated XML markup for that attribute component.
+        https://github.com/leifos/simiir/blob/master/simiir/sim_config_generator/sim_config_generator.py
         """
         attribute_markup = read_file_to_string('base_files/attribute.xml')
         value = attribute_dict['@value'].replace('[[ base_dir ]]', self._simulationBaseDir)
@@ -201,12 +205,21 @@ class SimulatorConfigurator():
 
     def generate_markup_userFiles(self):
         """
-        Given a tuple of dictionary objects, generates the markup & create files for the associated users. Returns a list with the full paths of the user config. files
+        Given a tuple of dictionary objects, generates the markup & create files for the associated users.
+        Returns a list with the full paths of the user config. files
         """
 
         user_files = []
+        baseDir = self._dictRepr['simulationConfiguration']['@baseDir']
 
-        self._simulationBaseDir = self._dictRepr['simulationConfiguration']['@baseDir']
+        # Check if the Directory has / character
+        if baseDir[-1] =='/':
+            baseDir = baseDir[:-1]
+            self._simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
+
+        else:
+            self._simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
+
 
         componentsPath = os.path.join(self._simiirPath,'simiir')
 
@@ -225,8 +238,6 @@ class SimulatorConfigurator():
             """
             Extract the components for the user configuration for this iteration
             """
-
-
 
             # try: DELETE
             #     if  iteration[1]['attribute'][0]['@value'].split('.')[0] != iteration[2]['attribute'][0]['@value'].split('.')[0]:
@@ -379,7 +390,7 @@ class SimulatorConfigurator():
             """
             simulation_markup = read_file_to_string('base_files/simulation.xml')
             simulation_markup = simulation_markup.format('trec_{0}_simulation-{1}'.format(retrModel,str(i)),
-                                                     os.path.join(self._dictRepr['simulationConfiguration']['@baseDir'], '{0}/{1}/{2}'),
+                                                     os.path.join(self._simulationBaseDir, '{0}/{1}/{2}'),
                                                      topics,
                                                      users,
                                                      simulation_markup_components['searchInterface']['class'],
@@ -477,7 +488,7 @@ def usage(filename):
     print "Usage: python {0} <xml_source> <simiir_path> <-u>(optional)".format(filename)
     print "Where:"
     print "  <xml_source>: the source XML file from which to generate simulation configuration files. See example.xml."
-    print "  <simiir_path>: the path to the simiir toolkit."
+    print "  <simiir_path>: the path to the simiir toolkit. (i.e. home/simiir)"
     print "  <-u>: This flag is used when user configurations will be appended at a later state (i.e. with PreRolled Qrels)"
 
 
@@ -486,7 +497,7 @@ def main():
     if len(sys.argv) > 2:
 
         simiirPathabs = os.path.abspath(sys.argv[2])
-        #dict_repr = build_dictionary(sys.argv[1])
+        # dict_repr = build_dictionary(sys.argv[1])
         if len(sys.argv) == 4:
             flag = sys.argv[3]
         else:
@@ -495,8 +506,7 @@ def main():
         sim1 = SimulatorConfigurator(sys.argv[1],simiirPathabs, flag)
 
         sim1.build_dictionary()
-        #componentsPath = os.path.join(simiirPath,'simiir')
-        #get_available_classes(componentsPath,'stopping_decision_makers')
+
         sim1.tidy_dictionary()
 
         sim1.appendSimiirPath()
@@ -506,6 +516,8 @@ def main():
         sim1.generate_markup_simulationFiles()
 
         sim1.generateSimulationPathsFile()
+
+        print '... the necessary files were created!'
 
         sys.exit(0)
 
