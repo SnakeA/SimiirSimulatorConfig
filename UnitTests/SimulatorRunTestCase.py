@@ -5,7 +5,7 @@ from SimulatorRun import SimulatorRun
 import shutil
 import os
 
-class SimulatorRunTest(unittest.TestCase):
+class SimulatorRunTestCase(unittest.TestCase):
 
     # SetUp - Define an input configuration file and the simiir path
     def setUp(self):

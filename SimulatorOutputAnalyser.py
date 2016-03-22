@@ -10,8 +10,6 @@ class SimulatorOutputAnalyser():
         self.file_out = file_out
         self.simiir_path = simiir_path
         self.data_out = []
-        self.curr_root = ''
-        self.curr_fileName = ''
 
     def writeCsvFile(self):
         """
@@ -108,39 +106,42 @@ class SimulatorOutputAnalyser():
         return (relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel,
                 total_time_taken)
 
-    def appendCurrentSimData(self):
+    def appendSimData(self):
         """
         Parse the necessary information and append them into a data structure
         """
+        for root, dirs, filenames in os.walk(self.input_dir):
+            for fileName in filenames:
+                if '.log' in fileName:
 
-        logFile = open(os.path.join(self.curr_root, self.curr_fileName), 'r')
-        outFile = open(os.path.join(self.curr_root, self.curr_fileName[:-4] + '.out'), 'r')
+                    logFile = open(os.path.join(root, fileName), 'r')
+                    outFile = open(os.path.join(root, fileName[:-4] + '.out'), 'r')
 
-        relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel, total_time_taken = self.extractLogFileInfo(
-            logFile)
-        map1, p5, p10, p15, p20, p30 = self.extractOutFileInfo(outFile)
+                    relevantDocs, total_queries_issued, total_snips_examined, total_docs_examined, total_docs_markedRel, total_time_taken = self.extractLogFileInfo(
+                        logFile)
+                    map1, p5, p10, p15, p20, p30 = self.extractOutFileInfo(outFile)
 
-        # Extract topic from fileName
-        topic = self.curr_fileName.split('-')[2]
+                    # Extract topic from fileName
+                    topic = fileName.split('-')[2]
 
-        # Caclulate the CG value
-        cgValue = self.cgCalculator(relevantDocs, topic)
-        mean_depth = self.meanDepthCalculator(total_snips_examined, total_queries_issued)
+                    # Caclulate the CG value
+                    cgValue = self.cgCalculator(relevantDocs, topic)
+                    mean_depth = self.meanDepthCalculator(total_snips_examined, total_queries_issued)
 
-        # Extract some more Information from fileName & root path
-        titles = self.curr_fileName.split('_')
-        run = self.curr_root.split('/')[-1]
+                    # Extract some more Information from fileName & root path
+                    titles = fileName.split('_')
+                    run = root.split('/')[-1]
 
-        model = titles[1]
-        queryGenerator = titles[3]
-        stoppingStrategy = titles[4].split('-')[0]
-        stoppingStrategyVal = titles[4].split('-')[1]
+                    model = titles[1]
+                    queryGenerator = titles[3]
+                    stoppingStrategy = titles[4].split('-')[0]
+                    stoppingStrategyVal = titles[4].split('-')[1]
 
-        self.data_out.append(run + ',' + model + ',' + topic + ',' + queryGenerator + ',' + stoppingStrategy + ','
-                             + stoppingStrategyVal + ',' + str(cgValue) + ',' + total_queries_issued + ',' +
-                             total_snips_examined + ',' + total_docs_examined + ',' + total_docs_markedRel + ',' + mean_depth + ',' + total_time_taken
-                             + ',' + map1 + ',' + p5 + ',' + p10 + ',' + p15 + ','
-                             + p20 + ',' + p30)
+                    self.data_out.append(run + ',' + model + ',' + topic + ',' + queryGenerator + ',' + stoppingStrategy + ','
+                                         + stoppingStrategyVal + ',' + str(cgValue) + ',' + total_queries_issued + ',' +
+                                         total_snips_examined + ',' + total_docs_examined + ',' + total_docs_markedRel + ',' + mean_depth + ',' + total_time_taken
+                                         + ',' + map1 + ',' + p5 + ',' + p10 + ',' + p15 + ','
+                                         + p20 + ',' + p30)
 
     def extractOutFileInfo(self, fileIn):
         """
@@ -173,6 +174,8 @@ class SimulatorOutputAnalyser():
         return (map1, p5, p10, p15, p20, p30)
 
 
+
+
 def usage(filename):
     """
     Prints the usage to stdout.
@@ -188,17 +191,9 @@ def main():
     if len(sys.argv) > 3 and len(sys.argv) < 5:
 
         simAnalyser = SimulatorOutputAnalyser(sys.argv[1], sys.argv[2], sys.argv[3])
-
-        # Iterates through all the .log files in the output dir
-        for root, dirs, filenames in os.walk(simAnalyser.input_dir):
-            for fileName in filenames:
-                if '.log' in fileName:
-                    simAnalyser.curr_root = root
-                    simAnalyser.curr_fileName = fileName
-
-                    simAnalyser.appendCurrentSimData()
-
+        simAnalyser.appendSimData()
         simAnalyser.writeCsvFile()
+
         print "The output file was successfully created to the following path: " + simAnalyser.file_out
 
         sys.exit(0)
