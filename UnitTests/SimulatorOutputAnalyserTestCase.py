@@ -1,3 +1,5 @@
+__author__ = 'Angelos Constantinides'
+
 import unittest
 from SimulatorConfigurator import SimulatorConfigurator
 from SimulatorRun import SimulatorRun
@@ -55,7 +57,7 @@ class SimulatorOutputAnalyserTestCase(unittest.TestCase):
         shutil.rmtree('./UnitTests/TestData/exampleSimData')
 
 
-    # Test if the number of simulation cofiguration files to be run, based on the input provided, is correct
+    # Test number of lines to be written in the csv are correct
     def test_numOf_lines_csv_data(self):
 
         self.simAnalyser.appendSimData()
@@ -65,7 +67,7 @@ class SimulatorOutputAnalyserTestCase(unittest.TestCase):
 
         self.assertEqual(len(self.simAnalyser.data_out), numberOfLines , 'Wrong size of data for the CSV file')
 
-    # Test if the csv file exists and contains the correct number of lines
+    # Test if the csv file has been successfully created
     def test_csv_file_existence(self):
 
         self.simAnalyser.appendSimData()

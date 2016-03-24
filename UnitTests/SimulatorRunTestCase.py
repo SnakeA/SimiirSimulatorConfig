@@ -1,5 +1,6 @@
+__author__ = 'Angelos Constantinides'
+
 import unittest
-import os
 from SimulatorConfigurator import SimulatorConfigurator
 from SimulatorRun import SimulatorRun
 import shutil
@@ -15,7 +16,7 @@ class SimulatorRunTestCase(unittest.TestCase):
 
         numOfRuns = 5
 
-        # Run the SimulatorConfigurator to create the necessary test files
+        # Create SimulatorConfigurator Object
         self.simConfg = SimulatorConfigurator(inputXMLfile,simiirPath, flag)
 
         self.simConfg.build_dictionary()
@@ -31,7 +32,7 @@ class SimulatorRunTestCase(unittest.TestCase):
 
         currDir = os.getcwd()
 
-        # Initialize the SimulatorRun class an required
+        # Create SimulatorRun Object
         self.simRun = SimulatorRun('./UnitTests/TestData/exampleSimData/simulationPaths.txt', os.path.join(simiirPath,'simiir/'), numOfRuns, flag)
 
         self.simRun.readSimulPathsFile()
@@ -52,7 +53,7 @@ class SimulatorRunTestCase(unittest.TestCase):
         self.assertEqual(len(self.simRun.listOfRuns), 10, 'Wrong number of simulation configuration to run')
 
     # Test return code after simulations run
-    def test_numOf_simulation_configuration_files2(self):
+    def test_simulationRun_retrunCode(self):
         workingDir = os.getcwd()
 
         returnCode = self.simRun.simRun()
@@ -61,7 +62,7 @@ class SimulatorRunTestCase(unittest.TestCase):
         os.chdir(workingDir)
         self.assertEqual(returnCode, 0, 'Simulation Run Was not successful')
 
-    # Test if the simulation runs were actually performed by looking at the COMPLETED files
+    # Test if the simulation runs were actually performed by looking at the generated COMPLETED files
     def test_runs_by_COMPLETED_files(self):
         workingDir = os.getcwd()
 

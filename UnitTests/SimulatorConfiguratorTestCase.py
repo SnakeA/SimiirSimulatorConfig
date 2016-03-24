@@ -1,3 +1,5 @@
+__author__ = 'Angelos Constantinides'
+
 import unittest
 import shutil
 from SimulatorConfigurator import SimulatorConfigurator
@@ -9,6 +11,8 @@ class SimulatorConfiguratorTestCase(unittest.TestCase):
         inputXMLfile = 'UnitTests/TestData/testInput.xml'
         simiirPath = '/home/angelos/IntellSearchAgent2/simiir/'
         flag = ''
+
+        # Create SimulatorConfigurator Object
         self.simConfg = SimulatorConfigurator(inputXMLfile,simiirPath, flag)
 
         self.simConfg.build_dictionary()
@@ -26,11 +30,11 @@ class SimulatorConfiguratorTestCase(unittest.TestCase):
         shutil.rmtree('./UnitTests/TestData/exampleSimData')
 
 
-    # Test if the number of simulated users, based on the input provided, is correct
+    # Test if the number of simulated users to be generated, based on the input provided, is correct
     def test_numOf_simulated_users(self):
         self.assertEqual(len(self.simConfg.userConfigPaths),6 ,'Wrong number of simulated users')
 
-    # Test if the number of simulation cofiguration files, based on the input provided, is correct
+    # Test if the number of simulation cofiguration files to be generated, based on the input provided, is correct
     def test_numOf_simulation_configuration_files(self):
         self.assertEqual(len(self.simConfg.simulConfigPaths), 2, 'Wrong number of simulation configuration files')
 
