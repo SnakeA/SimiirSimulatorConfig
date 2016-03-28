@@ -2,9 +2,13 @@
                              HOW TO RUN THE TESTS
 ==================================================================================================
 
+- Download SimIIR, ifind and trec_eval
 - Edit the appropriate .py file and enter the full simiir base directory
 - Install the necessary dependencies (see requirements.txt) - same for the SimIIR framework
 - Run the tests from the root directory (i.e. python UnitTests/SimulatorConfiguratorTestCase.py)
 - type python and the path to the test .py file
+
+## TestData ##
+Two base XML files can be found under this dir. These are used for the experiments.
 
 ==================================================================================================

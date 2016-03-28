@@ -11,15 +11,15 @@ from utilities import read_file_to_string, get_available_classes
 class SimulatorConfigurator():
 
     def __init__(self, inputXMLfile, simiirPath, flag):
-        self._simiirPath = simiirPath
-        self._inputXMLfile = inputXMLfile
-        self._simulationBaseDir = ''
-        self._dictRepr = None
+        self.simiirPath = simiirPath
+        self.inputXMLfile = inputXMLfile
+        self.simulationBaseDir = ''
+        self.dictRepr = None
         self.userConfigPaths = []
         self.simulConfigPaths = []
-        self._userPermutations = []
-        self._simulationPermutations = []
-        self._userFlag = flag
+        self.userPermutations = []
+        self.simulationPermutations = []
+        self.userFlag = flag
 
     def build_dictionary(self):
             """
@@ -57,11 +57,11 @@ class SimulatorConfigurator():
 
                 return d
 
-            config_file = etree.parse(self._inputXMLfile)
+            config_file = etree.parse(self.inputXMLfile)
             string_repr = etree.tostring(config_file, pretty_print=True)
             element_tree = cElementTree.XML(string_repr)
 
-            self._dictRepr = recursive_generation(element_tree)
+            self.dictRepr = recursive_generation(element_tree)
 
 
 
@@ -92,18 +92,18 @@ class SimulatorConfigurator():
         """
         Lists for the User Configuration
         """
-        self._dictRepr['simulationConfiguration']['queryGenerator'] = to_list(self._dictRepr['simulationConfiguration']['queryGenerator'], 'queryGenerator')
-        self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier'] = to_list(self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier'], 'snippetClassifier')
-        self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier'] = to_list(self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier'], 'documentClassifier')
-        self._dictRepr['simulationConfiguration']['stoppingDecisionMaker'] = to_list(self._dictRepr['simulationConfiguration']['stoppingDecisionMaker'], 'stoppingDecisionMaker')
-        self._dictRepr['simulationConfiguration']['logger'] = to_list(self._dictRepr['simulationConfiguration']['logger'], 'logger')
-        self._dictRepr['simulationConfiguration']['searchContext'] = to_list(self._dictRepr['simulationConfiguration']['searchContext'], 'searchContext')
+        self.dictRepr['simulationConfiguration']['queryGenerator'] = to_list(self.dictRepr['simulationConfiguration']['queryGenerator'], 'queryGenerator')
+        self.dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier'] = to_list(self.dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier'], 'snippetClassifier')
+        self.dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier'] = to_list(self.dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier'], 'documentClassifier')
+        self.dictRepr['simulationConfiguration']['stoppingDecisionMaker'] = to_list(self.dictRepr['simulationConfiguration']['stoppingDecisionMaker'], 'stoppingDecisionMaker')
+        self.dictRepr['simulationConfiguration']['logger'] = to_list(self.dictRepr['simulationConfiguration']['logger'], 'logger')
+        self.dictRepr['simulationConfiguration']['searchContext'] = to_list(self.dictRepr['simulationConfiguration']['searchContext'], 'searchContext')
 
         """
         Lists for the Simulator Configuration
         """
-        self._dictRepr['simulationConfiguration']['topics'] = to_list(self._dictRepr['simulationConfiguration']['topics'], 'topics')
-        self._dictRepr['simulationConfiguration']['searchInterface'] = to_list(self._dictRepr['simulationConfiguration']['searchInterface'], 'searchInterface')
+        self.dictRepr['simulationConfiguration']['topics'] = to_list(self.dictRepr['simulationConfiguration']['topics'], 'topics')
+        self.dictRepr['simulationConfiguration']['searchInterface'] = to_list(self.dictRepr['simulationConfiguration']['searchInterface'], 'searchInterface')
 
 
 
@@ -114,25 +114,25 @@ class SimulatorConfigurator():
         (Adapted from https://github.com/leifos/simiir/blob/master/simiir/sim_config_generator/sim_config_generator.py
         & modified as required)
         """
-        query_generators = self._dictRepr['simulationConfiguration']['queryGenerator']
-        snippet_classifiers = self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']
-        document_classifiers = self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']
-        decision_makers = self._dictRepr['simulationConfiguration']['stoppingDecisionMaker']
-        loggers = self._dictRepr['simulationConfiguration']['logger']
-        search_contexts = self._dictRepr['simulationConfiguration']['searchContext']
-        search_interfaces = self._dictRepr['simulationConfiguration']['searchInterface']
+        query_generators = self.dictRepr['simulationConfiguration']['queryGenerator']
+        snippet_classifiers = self.dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']
+        document_classifiers = self.dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']
+        decision_makers = self.dictRepr['simulationConfiguration']['stoppingDecisionMaker']
+        loggers = self.dictRepr['simulationConfiguration']['logger']
+        search_contexts = self.dictRepr['simulationConfiguration']['searchContext']
+        search_interfaces = self.dictRepr['simulationConfiguration']['searchInterface']
 
 
 
 
-        self._userPermutations = list(itertools.product(query_generators,
+        self.userPermutations = list(itertools.product(query_generators,
                                                         snippet_classifiers,
                                                         document_classifiers,
                                                         decision_makers,
                                                         loggers,
                                                         search_contexts))
 
-        self._simulationPermutations = list(itertools.product(search_interfaces))
+        self.simulationPermutations = list(itertools.product(search_interfaces))
 
 
 
@@ -148,7 +148,7 @@ class SimulatorConfigurator():
                                                entry['@qrelsFilename'])
             return topic_markup
 
-        topics_list = self._dictRepr['simulationConfiguration']['topics']
+        topics_list = self.dictRepr['simulationConfiguration']['topics']
         topics_str = ""
 
         for entry in topics_list:
@@ -176,7 +176,7 @@ class SimulatorConfigurator():
         https://github.com/leifos/simiir/blob/master/simiir/sim_config_generator/sim_config_generator.py
         """
         attribute_markup = read_file_to_string('base_files/attribute.xml')
-        value = attribute_dict['@value'].replace('[[ base_dir ]]', self._simulationBaseDir)
+        value = attribute_dict['@value'].replace('[[ base_dir ]]', self.simulationBaseDir)
 
         attribute_markup = attribute_markup.format(attribute_dict['@name'],
                                                    attribute_dict['@type'],
@@ -210,21 +210,21 @@ class SimulatorConfigurator():
         """
 
         user_files = []
-        baseDir = self._dictRepr['simulationConfiguration']['@baseDir']
+        baseDir = self.dictRepr['simulationConfiguration']['@baseDir']
 
         # Check if the Directory has / character
         if baseDir[-1] =='/':
             baseDir = baseDir[:-1]
-            self._simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
+            self.simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
 
         else:
-            self._simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
+            self.simulationBaseDir = os.path.join(os.path.dirname(os.path.abspath(baseDir)),baseDir.split('/')[-1])
 
 
-        componentsPath = os.path.join(self._simiirPath,'simiir')
+        componentsPath = os.path.join(self.simiirPath,'simiir')
 
         j=1
-        for iteration in self._userPermutations:
+        for iteration in self.userPermutations:
             user_markup_components = {
                 'id': None,
                 'queryGenerator': {'class': None, 'attributes': None, 'attributes_py': None},
@@ -239,11 +239,6 @@ class SimulatorConfigurator():
             Extract the components for the user configuration for this iteration
             """
 
-            # try: DELETE
-            #     if  iteration[1]['attribute'][0]['@value'].split('.')[0] != iteration[2]['attribute'][0]['@value'].split('.')[0]:
-            #         continue
-            # except:
-            #     print "key Error"
 
             for component in iteration:
 
@@ -307,8 +302,7 @@ class SimulatorConfigurator():
             """
             Create the user configuration file
             """
-            #filePath = os.path.join(self._simulationBaseDir,fileName)
-            filePath = self._simulationBaseDir + fileName #DELETE
+            filePath = self.simulationBaseDir + fileName
             user_files.append(filePath)
 
 
@@ -335,7 +329,7 @@ class SimulatorConfigurator():
 
         #Count Iterations
         i=0
-        for iteration in self._simulationPermutations:
+        for iteration in self.simulationPermutations:
 
             simulation_markup_components = {
                 'id': None,
@@ -367,7 +361,7 @@ class SimulatorConfigurator():
             """
             retrModelVal=-1
 
-            for comp in self._dictRepr['simulationConfiguration']['searchInterface'][i]['attribute']:
+            for comp in self.dictRepr['simulationConfiguration']['searchInterface'][i]['attribute']:
                 if comp['@name'] == 'model':
                     retrModelVal = comp['@value']
 
@@ -378,7 +372,7 @@ class SimulatorConfigurator():
             #Generate users and topics
 
             #If user flag set, users will be set to sim.Config files at a later state
-            if self._userFlag == '-u':
+            if self.userFlag == '-u':
                 users = "{3}"
             else:
                 users = self.generate_user_entries()
@@ -390,7 +384,7 @@ class SimulatorConfigurator():
             """
             simulation_markup = read_file_to_string('base_files/simulation.xml')
             simulation_markup = simulation_markup.format('trec_{0}_simulation-{1}'.format(retrModel,str(i)),
-                                                     os.path.join(self._simulationBaseDir, '{0}/{1}/{2}'),
+                                                     os.path.join(self.simulationBaseDir, '{0}/{1}/{2}'),
                                                      topics,
                                                      users,
                                                      simulation_markup_components['searchInterface']['class'],
@@ -405,8 +399,7 @@ class SimulatorConfigurator():
 
             i = i +1
 
-            #filePath = os.path.join(self._simulationBaseDir,fileName)
-            filePath = self._simulationBaseDir + fileName #DELETE - change to os.path.join()
+            filePath = self.simulationBaseDir + fileName
             simulation_files.append(filePath)
 
             if not os.path.exists(os.path.dirname(filePath)):
@@ -429,53 +422,53 @@ class SimulatorConfigurator():
         """
         For topics
         """
-        for topic in self._dictRepr['simulationConfiguration']['topics']:
-            topic['@qrelsFilename']="{0}{1}".format(self._simiirPath,topic['@qrelsFilename'])
-            topic['@filename'] = "{0}{1}".format(self._simiirPath,topic['@filename'])
+        for topic in self.dictRepr['simulationConfiguration']['topics']:
+            topic['@qrelsFilename']="{0}{1}".format(self.simiirPath,topic['@qrelsFilename'])
+            topic['@filename'] = "{0}{1}".format(self.simiirPath,topic['@filename'])
 
         """
         For the Search Interface
         """
-        for searchInterface in self._dictRepr['simulationConfiguration']['searchInterface']:
-            searchInterface['attribute'][0]['@value'] ='{0}{1}'.format(self._simiirPath, searchInterface['attribute'][0]['@value'])
+        for searchInterface in self.dictRepr['simulationConfiguration']['searchInterface']:
+            searchInterface['attribute'][0]['@value'] ='{0}{1}'.format(self.simiirPath, searchInterface['attribute'][0]['@value'])
 
         """
         For the Query Generator
         """
-        for queryGenerator in self._dictRepr['simulationConfiguration']['queryGenerator']:
-            queryGenerator['attribute']['@value'] = "{0}{1}".format(self._simiirPath,queryGenerator['attribute']['@value'])
+        for queryGenerator in self.dictRepr['simulationConfiguration']['queryGenerator']:
+            queryGenerator['attribute']['@value'] = "{0}{1}".format(self.simiirPath,queryGenerator['attribute']['@value'])
 
         """
         For the document Classifier
         """
-        for textClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']:
+        for textClassifier in self.dictRepr['simulationConfiguration']['textClassifiers']['documentClassifier']:
             if 'attribute' not in textClassifier:
                 break
             else:
-                textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,textClassifier['attribute'][0]['@value'])
+                textClassifier['attribute'][0]['@value'] = "{0}{1}".format(self.simiirPath,textClassifier['attribute'][0]['@value'])
 
         """
         For the snippet Classifier
         """
-        for snippetClassifier in self._dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']:
+        for snippetClassifier in self.dictRepr['simulationConfiguration']['textClassifiers']['snippetClassifier']:
             if 'attribute' not in snippetClassifier:
                 break
             else:
-                snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self._simiirPath,snippetClassifier['attribute'][0]['@value'])
+                snippetClassifier['attribute'][0]['@value'] = "{0}{1}".format(self.simiirPath,snippetClassifier['attribute'][0]['@value'])
 
     def generateSimulationPathsFile(self):
         """
         Create a text file with the path of each simulation configuration
         """
-        write_path = os.path.join(self._simulationBaseDir,'simulationPaths.txt')
-        with open(write_path, "w") as file: # DELETE change to os.path.join()
+        write_path = os.path.join(self.simulationBaseDir,'simulationPaths.txt')
+        with open(write_path, "w") as file:
                 for SimulationPath in self.simulConfigPaths:
                     file.write(SimulationPath+"\n")
         file.close()
 
-        if self._userFlag == '-u':
-            write_path = os.path.join(self._simulationBaseDir,'userPaths.txt')
-            with open(write_path, "w") as file: # DELETE change to os.path.join()
+        if self.userFlag == '-u':
+            write_path = os.path.join(self.simulationBaseDir,'userPaths.txt')
+            with open(write_path, "w") as file:
                     for userPath in self.userConfigPaths:
                         file.write(userPath+"\n")
             file.close()
@@ -497,7 +490,7 @@ def main():
     if len(sys.argv) > 2:
 
         simiirPathabs = os.path.abspath(sys.argv[2])
-        # dict_repr = build_dictionary(sys.argv[1])
+
         if len(sys.argv) == 4:
             flag = sys.argv[3]
         else:

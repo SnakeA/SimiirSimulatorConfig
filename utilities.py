@@ -1,8 +1,10 @@
+__author__ = 'Angelos Constantinides'
 import os
 import sys
 import inspect
 import importlib
 
+# Includes some helper methods used by the experimental pipeline applications
 
 def read_file_to_string(filename):
     """
@@ -50,15 +52,3 @@ def get_available_classes(componentsPath, component):
                 classes.add(name)
 
     return classes
-
-# Clears output folder
-def clearOutFolder(folder):
-    for file in os.listdir(folder):
-        file_path = os.path.join(folder, file)
-
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-                # elif os.path.isdir(file_path): shutil.rmtree(file_path)
-        except Exception, e:
-            print e

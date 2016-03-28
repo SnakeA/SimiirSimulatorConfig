@@ -51,7 +51,6 @@ class SimulatorOutputAnalyser():
 
                 for line in qrelFile:
                     if (docId in line) and (topic in line):
-                        # print 'CG for '+ docId +' ' + line.split(' ')[3]
                         cg = cg + int(line.split(' ')[3])
 
                 # return to beginning of file

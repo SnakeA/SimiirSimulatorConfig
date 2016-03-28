@@ -23,12 +23,6 @@ For all the directories that are specified in the file (except baseDir which sho
              <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
             <attribute name ="model" type="integer" value="1" is_argument="true" />
         </class>
-        <class name="WhooshSearchInterface">
-            <attribute name="whoosh_index_dir" type="string" value="/example_data/fullindex" is_argument="true" />
-            <attribute name="implicit_or" type="boolean" value="1" is_argument="true" />
-             <!-- 0 - TFIDF, 1 - BM25, 2 - PL2 -->
-            <attribute name ="model" type="integer" value="2" is_argument="true" />
-        </class>
 	</searchInterface>
 
 
