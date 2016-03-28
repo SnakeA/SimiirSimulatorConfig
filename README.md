@@ -8,7 +8,7 @@ Requirements are included & are the same as those of the SimIIR framework.
 
 ## SimulatorConfigurator.py
 
-The first script of the pipeline. Takes an XML file as input (see ###xml Inputs for examples) as well as the path to the base dir of the SimIIR framework and an optional -u flag in case of pre-rolled relevance judgment files
+The first script of the pipeline. Takes an XML file as input (see xml Inputs for examples) as well as the path to the base dir of the SimIIR framework and an optional -u flag in case of pre-rolled relevance judgment files
 Parses the input XML file and generates the appropriate simulation and user configuration files for the SimIIR framework, as well as a text file with the absolute paths to the sim. configuration files
 
 type python SimulatorConfigurator.py for usage msg!
